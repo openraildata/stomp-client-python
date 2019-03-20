@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.thalesgroup.com/rtti/XmlRefData/v3" targetNamespace="http://www.thalesgroup.com/rtti/XmlRefData/v3" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--  Copyright (c) 2014 Thales Transport & Security Ltd -->
+	<!--  Project 753 ATOC REAL TIME TRAIN INFORMATION -->
+	<!--  Project WA063A0 ATOC DARWIN -->
+	<!--  PUSH PORT TIMETABLE REFERENCE SCHEMA -->
+	<!-- 
+	DATE			COMMENT
+	=========	=================================================================
+	20/01/2005	Placed schema in a namespace
+	02/06/2005	Incorporated customer comments
+						Changed PPort to Pport
+	14/06/2005	Added URLs for TOC references
+						Added platform window info
+						Changed a couple of bare xs:string attributes to simple types
+	25/11/2005	Issued as version 1.
+	30/09/2010	Version 2:
+						Added CIS forecast source codes
+	23/06/2014	Version 3:
+						Minor changes to remove obsolete data and made some data optional.
+	-->
+	<!-- Simple Types -->
+	<xs:simpleType name="TimetableIdType">
+		<xs:annotation>
+			<xs:documentation>Unique Timetable identifier </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="14"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="LocationNameType">
+		<xs:annotation>
+			<xs:documentation>English name of the location</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="30"/>
+			<xs:minLength value="1"/>
+			<xs:whiteSpace value="preserve"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TiplocType">
+		<xs:annotation>
+			<xs:documentation>Tiploc Type (This is the short version of a TIPLOC - without spaces)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="7"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TOCType">
+		<xs:annotation>
+			<xs:documentation>ATOC Code Type</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CrsType">
+		<xs:annotation>
+			<xs:documentation>CRS Code Type</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ReasonCodeType">
+		<xs:annotation>
+			<xs:documentation>Reason code</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:int"/>
+	</xs:simpleType>
+	<xs:simpleType name="ReasonTextType">
+		<xs:annotation>
+			<xs:documentation>Reason as text</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="256"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ViaTextType">
+		<xs:annotation>
+			<xs:documentation>The text displayed for a via</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="256"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TOCNameType">
+		<xs:annotation>
+			<xs:documentation>The name of the TOC</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="0"/>
+			<xs:maxLength value="256"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="UrlType">
+		<xs:annotation>
+			<xs:documentation>A URL</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="0"/>
+			<xs:maxLength value="512"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CISSourceCode">
+		<xs:annotation>
+			<xs:documentation>A CIS source code</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="4"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CISSourceName">
+		<xs:annotation>
+			<xs:documentation>A CIS source name</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="0"/>
+			<xs:maxLength value="30"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- Elements -->
+	<xs:element name="PportTimetableRef">
+		<xs:annotation>
+			<xs:documentation>Push Port Timetable Reference Schema </xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="tns:LocationRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="tns:TocRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="LateRunningReasons" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="tns:Reason" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="CancellationReasons" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="tns:Reason" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="tns:Via" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="tns:CISSource" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="timetableId" type="tns:TimetableIdType" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="LocationRef">
+		<xs:annotation>
+			<xs:documentation>Defines a location</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="tpl" type="tns:TiplocType" use="required">
+				<xs:annotation>
+					<xs:documentation>TIPLOC code</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="crs" type="tns:CrsType" use="optional">
+				<xs:annotation>
+					<xs:documentation>CRS code</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="toc" type="tns:TOCType" use="optional">
+				<xs:annotation>
+					<xs:documentation>Train Operating Company that manages the station (may be non-TOC code, e.g. Network Rail).</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="locname" type="tns:LocationNameType" use="required">
+				<xs:annotation>
+					<xs:documentation>English name of location</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TocRef">
+		<xs:annotation>
+			<xs:documentation>Defines a mapping between a TOC and a displayable name</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="toc" type="tns:TOCType" use="required">
+				<xs:annotation>
+					<xs:documentation>The TOC code</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="tocname" type="tns:TOCNameType" use="required">
+				<xs:annotation>
+					<xs:documentation>The name of the TOC</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="url" type="tns:UrlType" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Reason">
+		<xs:annotation>
+			<xs:documentation>Defines a mapping bewteen a reason code and the corresponding text</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="code" type="tns:ReasonCodeType" use="required"/>
+			<xs:attribute name="reasontext" type="tns:ReasonTextType" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Via">
+		<xs:annotation>
+			<xs:documentation>Defines the locations a journey must be viewed from, go to and pass through for the corresponding via text to be displayed</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="at" type="tns:CrsType" use="required">
+				<xs:annotation>
+					<xs:documentation>This is the station for which the via is defined</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="dest" type="tns:TiplocType" use="required">
+				<xs:annotation>
+					<xs:documentation>The destination of the journey must match this before the via text is valid</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="loc1" type="tns:TiplocType" use="required">
+				<xs:annotation>
+					<xs:documentation>The journey must call at this station before the via text is valid.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="loc2" type="tns:TiplocType" use="optional">
+				<xs:annotation>
+					<xs:documentation>The journey must call at this station (after the call at loc1) before the via text is valid.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="viatext" type="tns:ViaTextType" use="required">
+				<xs:annotation>
+					<xs:documentation>The via text to display if a journey matches the previous attributes</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CISSource">
+		<xs:annotation>
+			<xs:documentation>Defines the mapping between 4 letter CIS codes and the CIS name</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="code" type="tns:CISSourceCode" use="required">
+				<xs:annotation>
+					<xs:documentation>This is the 4 letter CIS code</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="name" type="tns:CISSourceName" use="required">
+				<xs:annotation>
+					<xs:documentation>The CIS name</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

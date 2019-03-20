@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ct="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1" xmlns:ct3="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v3" xmlns:tns="http://www.thalesgroup.com/rtti/PushPort/Formations/v1" targetNamespace="http://www.thalesgroup.com/rtti/PushPort/Formations/v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<!--  Copyright (c) 2017 RDG & Thales -->
+	<!--  Project 753 ATOC REAL TIME TRAIN INFORMATION -->
+	<!--  Project WA063A0 ATOC DARWIN -->
+	<!--  PUSH PORTS FORMATIONS SCHEMA -->
+	<!--  
+	DATE			COMMENT
+	========	=======================================================================
+	02/02/2017  	Version 1:
+						Support for Train Formation and Loading data.
+	-->
+	<xs:import namespace="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1" schemaLocation="rttiPPTCommonTypes_v1.xsd"/>
+	<xs:import namespace="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v3" schemaLocation="rttiPPTCommonTypes_v3.xsd"/>
+	<!-- Simple Types -->
+	<!-- Complex Types -->
+	<xs:complexType name="ScheduleFormations">
+		<xs:annotation>
+			<xs:documentation>Type describing all of the Train Formations set for a Schedule.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="formation" type="tns:Formation" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>An individual formation for all or part of the service.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="rid" type="ct:RIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>RTTI unique Train Identifier</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="Formation">
+		<xs:annotation>
+			<xs:documentation>Type describing a Train Formation for a Schedule.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="coaches" type="tns:CoachList">
+				<xs:annotation>
+					<xs:documentation>A list of coaches in this formation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="fid" type="ct3:FormationIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>The unique identifier of this formation data.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="src" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>The source of the formation data.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="srcInst" type="ct:SourceTypeInst" use="optional">
+			<xs:annotation>
+				<xs:documentation>The RTTI instance ID of the src (if any).</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="Loading">
+		<xs:annotation>
+			<xs:documentation>Loading data for an individual location in a schedule linked to a formation.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="loading" type="tns:CoachLoadingData" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Loading data for an individual coach in the formation. If no loading data is provided for a coach in the formation then it should be assumed to have been cleared.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="fid" type="ct3:FormationIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>The unique identifier of the formation data.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="rid" type="ct:RIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>RTTI unique Train ID</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="tpl" type="ct:TiplocType" use="required">
+			<xs:annotation>
+				<xs:documentation>TIPLOC where the loading data applies.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attributeGroup ref="ct:CircularTimes"/>
+	</xs:complexType>
+	<xs:complexType name="CoachList">
+		<xs:annotation>
+			<xs:documentation>A list of coach data for a formation.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="coach" type="tns:CoachData" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>An individual coach in a formation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CoachData">
+		<xs:annotation>
+			<xs:documentation>Data for an individual coach in a formation.</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="coachNumber" type="ct3:CoachNumberType" use="required">
+			<xs:annotation>
+				<xs:documentation>The number/identifier for this coach, e.g. "A".</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="coachClass" type="ct3:CoachClassType" use="optional">
+			<xs:annotation>
+				<xs:documentation>The class of the coach, e.g. "First" or "Standard".</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="CoachLoadingData">
+		<xs:annotation>
+			<xs:documentation>Type describing the loading data for an identified coach.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="ct3:LoadingValue">
+				<xs:attribute name="coachNumber" type="ct3:CoachNumberType" use="required">
+					<xs:annotation>
+						<xs:documentation>The number/identifier for this coach, e.g. "A".</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="src" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation>The source of the loading data.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="srcInst" type="ct:SourceTypeInst" use="optional">
+					<xs:annotation>
+						<xs:documentation>The RTTI instance ID of the src (if any).</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+</xs:schema>

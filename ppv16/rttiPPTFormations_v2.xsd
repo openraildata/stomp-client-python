@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ct="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1" xmlns:ct3="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v3" xmlns:ct4="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v4" xmlns:tns="http://www.thalesgroup.com/rtti/PushPort/Formations/v2" targetNamespace="http://www.thalesgroup.com/rtti/PushPort/Formations/v2" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.0">
+	<!--  Copyright (c) 2017 RDG & Thales -->
+	<!--  Project 753 ATOC REAL TIME TRAIN INFORMATION -->
+	<!--  Project WA063A0 ATOC DARWIN -->
+	<!--  PUSH PORTS FORMATIONS SCHEMA -->
+	<!--  
+	DATE			COMMENT
+	========	=======================================================================
+	02/02/2017  	Version 1:
+						Support for Train Formation and Loading data.
+	01/10/2017  	Version 2:
+						Support for toilet information in Train Formation data.
+	-->
+	<xs:import namespace="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1" schemaLocation="rttiPPTCommonTypes_v1.xsd"/>
+	<xs:import namespace="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v3" schemaLocation="rttiPPTCommonTypes_v3.xsd"/>
+	<xs:import namespace="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v4" schemaLocation="rttiPPTCommonTypes_v4.xsd"/>
+	<!-- Simple Types -->
+	<!-- Complex Types -->
+	<xs:complexType name="ScheduleFormations">
+		<xs:annotation>
+			<xs:documentation>Type describing all of the Train Formations set for a Schedule.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="formation" type="tns:Formation" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>An individual formation for all or part of the service.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="rid" type="ct:RIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>RTTI unique Train Identifier</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="Formation">
+		<xs:annotation>
+			<xs:documentation>Type describing a Train Formation for a Schedule.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="coaches" type="tns:CoachList">
+				<xs:annotation>
+					<xs:documentation>A list of coaches in this formation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="fid" type="ct3:FormationIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>The unique identifier of this formation data.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="src" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>The source of the formation data.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="srcInst" type="ct:SourceTypeInst" use="optional">
+			<xs:annotation>
+				<xs:documentation>The RTTI instance ID of the src (if any).</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="CoachList">
+		<xs:annotation>
+			<xs:documentation>A list of coach data for a formation.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="coach" type="tns:CoachData" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>An individual coach in a formation.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CoachData">
+		<xs:annotation>
+			<xs:documentation>Data for an individual coach in a formation.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="toilet" type="ct4:ToiletAvailabilityType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The availability of a toilet in this coach. E.g. "Unknown", "None" , "Standard" or "Accessible". Note that other values may be supplied in the future without a schema change. If no toilet availability is supplied then it should be assumed to be "Unknown".</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="coachNumber" type="ct3:CoachNumberType" use="required">
+			<xs:annotation>
+				<xs:documentation>The number/identifier for this coach, e.g. "A".</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="coachClass" type="ct3:CoachClassType" use="optional">
+			<xs:annotation>
+				<xs:documentation>The class of the coach, e.g. "First" or "Standard".</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

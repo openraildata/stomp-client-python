@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:ct="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.thalesgroup.com/rtti/PushPort/TrainAlerts/v1" targetNamespace="http://www.thalesgroup.com/rtti/PushPort/TrainAlerts/v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<!--  Copyright (c) 2013 ATOC NRE & Thales -->
+	<!--  Project 753 ATOC REAL TIME TRAIN INFORMATION -->
+	<!--  Project WA063A0 ATOC DARWIN -->
+	<!--  PUSH PORTS TRAIN ALERTS SCHEMA -->
+	<!--  
+	DATE			COMMENT
+	========	=======================================================================
+	11/03/2013  	Version 1:
+						Support for DCIS. Separated out to multiple schemas.
+	-->
+	<xs:import namespace="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1" schemaLocation="rttiPPTCommonTypes_v1.xsd"/>
+	<!-- Simple Types -->
+	<xs:simpleType name="AlertAudienceType">
+		<xs:annotation>
+			<xs:documentation>Alert Audience Data Type</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Customer"/>
+			<xs:enumeration value="Staff"/>
+			<xs:enumeration value="Operations"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="AlertType">
+		<xs:annotation>
+			<xs:documentation>Alert Type Data Type</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Normal"/>
+			<xs:enumeration value="Forced"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- Complex Types -->
+	<xs:complexType name="TrainAlert">
+		<xs:annotation>
+			<xs:documentation>Train Alert</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AlertID" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>TODO</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AlertServices" type="tns:AlertServices">
+				<xs:annotation>
+					<xs:documentation>TODO</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SendAlertBySMS" type="xs:boolean">
+				<xs:annotation>
+					<xs:documentation>TODO</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SendAlertByEmail" type="xs:boolean">
+				<xs:annotation>
+					<xs:documentation>TODO</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SendAlertByTwitter" type="xs:boolean">
+				<xs:annotation>
+					<xs:documentation>TODO</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Source" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>TODO</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AlertText" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>TODO</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Audience" type="tns:AlertAudienceType">
+				<xs:annotation>
+					<xs:documentation>TODO</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AlertType" type="tns:AlertType">
+				<xs:annotation>
+					<xs:documentation>TODO</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CopiedFromAlertID" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>TODO</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CopiedFromSource" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>TODO</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AlertService">
+		<xs:annotation>
+			<xs:documentation>TODO</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Location" type="xs:string" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>TODO</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="RID" type="ct:RIDType">
+			<xs:annotation>
+				<xs:documentation>TODO</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="UID" type="ct:UIDType">
+			<xs:annotation>
+				<xs:documentation>TODO</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="SSD" type="xs:date">
+			<xs:annotation>
+				<xs:documentation>TODO</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="AlertServices">
+		<xs:annotation>
+			<xs:documentation>A list of services to which the alert applies</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="AlertService" type="tns:AlertService" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>TODO</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

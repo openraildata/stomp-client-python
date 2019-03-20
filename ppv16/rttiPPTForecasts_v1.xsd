@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:ct="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.thalesgroup.com/rtti/PushPort/Forecasts/v1" targetNamespace="http://www.thalesgroup.com/rtti/PushPort/Forecasts/v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<!--  Copyright (c) 2013 ATOC NRE & Thales -->
+	<!--  Project 753 ATOC REAL TIME TRAIN INFORMATION -->
+	<!--  Project WA063A0 ATOC DARWIN -->
+	<!--  PUSH PORTS FORECASTS SCHEMA -->
+	<!--  
+	DATE			COMMENT
+	========	=======================================================================
+	11/03/2013  	Version 1:
+						Support for DCIS. Separated out to multiple schemas.
+	-->
+	<xs:import namespace="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1" schemaLocation="rttiPPTCommonTypes_v1.xsd"/>
+	<!-- Simple Types -->
+	<!-- Complex Types -->
+	<xs:complexType name="TrainOrderItem">
+		<xs:annotation>
+			<xs:documentation>Describes the identifier of a train in the train order</xs:documentation>
+		</xs:annotation>
+		<xs:choice>
+			<xs:element name="rid">
+				<xs:annotation>
+					<xs:documentation>For trains in the train order where the train is the Darwin timetable, it will be identified by its RID</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="ct:RIDType">
+							<xs:attributeGroup ref="ct:CircularTimes">
+								<xs:annotation>
+									<xs:documentation>One or more scheduled times to identify the instance of the location in the train schedule for which the train order is set.</xs:documentation>
+								</xs:annotation>
+							</xs:attributeGroup>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="trainID" type="ct:TrainIdType">
+				<xs:annotation>
+					<xs:documentation>Where a train in the train order is not in the Darwin timetable, a Train ID (headcode) will be supplied</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="TrainOrderData">
+		<xs:annotation>
+			<xs:documentation>Defines the sequence of trains making up the train order</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="first" type="tns:TrainOrderItem">
+				<xs:annotation>
+					<xs:documentation>The first train in the train order.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:sequence minOccurs="0">
+				<xs:element name="second" type="tns:TrainOrderItem">
+					<xs:annotation>
+						<xs:documentation>The second train in the train order.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="third" type="tns:TrainOrderItem" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>The third train in the train order.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TrainOrder">
+		<xs:annotation>
+			<xs:documentation>Defines the expected Train order at a platform</xs:documentation>
+		</xs:annotation>
+		<xs:choice>
+			<xs:element name="set" type="tns:TrainOrderData"/>
+			<xs:element name="clear">
+				<xs:annotation>
+					<xs:documentation>Clear the current train order</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="tiploc" type="ct:TiplocType" use="required">
+			<xs:annotation>
+				<xs:documentation>The tiploc where the train order applies</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="crs" type="ct:CrsType" use="required">
+			<xs:annotation>
+				<xs:documentation>The CRS code of the station where the train order applies</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="platform" type="ct:PlatformType" use="required">
+			<xs:annotation>
+				<xs:documentation>The platform number where the train order applies</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="PlatformData">
+		<xs:annotation>
+			<xs:documentation>Platform number with associated flags</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="ct:PlatformType">
+				<xs:attribute name="platsup" type="xs:boolean" use="optional" default="false">
+					<xs:annotation>
+						<xs:documentation>Platform number is suppressed and should not be displayed.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="cisPlatsup" type="xs:boolean" use="optional" default="false">
+					<xs:annotation>
+						<xs:documentation>Whether a CIS, or Darwin Workstation, has set platform suppression at this location.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="platsrc" use="optional" default="P">
+					<xs:annotation>
+						<xs:documentation>The source of the platfom number. P = Planned, A = Automatic, M = Manual.</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:length value="1"/>
+							<xs:enumeration value="P"/>
+							<xs:enumeration value="A"/>
+							<xs:enumeration value="M"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="conf" type="xs:boolean" use="optional" default="false">
+					<xs:annotation>
+						<xs:documentation>True if the platform number is confirmed.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="TSTimeData">
+		<xs:annotation>
+			<xs:documentation>Type describing time-based forecast attributes for a TS arrival/departure/pass</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="et" type="ct:RTTITimeType" use="optional">
+			<xs:annotation>
+				<xs:documentation>Estimated Time</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="at" type="ct:RTTITimeType" use="optional">
+			<xs:annotation>
+				<xs:documentation>Actual Time</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="atRemoved" type="xs:boolean" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>If true, indicates that an actual time ("at") value has just been removed and replaced by an estimated time ("et"). Note that this attribute will only be set to "true" once, when the actual time is removed, and will not be set in any snapshot.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="etmin" type="ct:RTTITimeType" use="optional">
+			<xs:annotation>
+				<xs:documentation>The manually applied lower limit that has been applied to the estimated time at this location. The estimated time will not be set lower than this value, but may be set higher.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="etUnknown" type="xs:boolean" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Indicates that an unknown delay forecast has been set for the estimated time at this location. Note that this value indicates where a manual unknown delay forecast has been set, whereas it is the "delayed" attribute that indicates that the actual forecast is "unknown delay".</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="delayed" type="xs:boolean" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Indicates that this estimated time is a forecast of "unknown delay". Displayed  as "Delayed" in LDB. Note that this value indicates that this forecast is "unknown delay", whereas it is the "etUnknown" attribute that indicates where the manual unknown delay forecast has been set.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="src" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>The source of the forecast or actual time.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="srcInst" type="ct:SourceTypeInst" use="optional">
+			<xs:annotation>
+				<xs:documentation>The RTTI CIS code of the CIS instance if the src is a CIS.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="TSLocation">
+		<xs:annotation>
+			<xs:documentation>Forecast data for an individual location in the service's schedule</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="arr" type="tns:TSTimeData" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Forecast data for the arrival at this location</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="dep" type="tns:TSTimeData" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Forecast data for the departure at this location</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="pass" type="tns:TSTimeData" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Forecast data for the pass of this location</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="plat" type="tns:PlatformData" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Current platform number</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="suppr" type="xs:boolean" default="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The service is suppressed at this location.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="length" type="ct:TrainLengthType" default="0" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The length of the service at this location on departure (or arrival at destination). The default value of zero indicates that the length is unknown.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="detachFront" type="xs:boolean" default="false" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Indicates from which end of the train stock will be detached. The value is set to “true” if stock will be detached from the front of the train at this location. It will be set at each location where stock will be detached from the front. Darwin will not validate that a stock detachment activity code applies at this location.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="tpl" type="ct:TiplocType" use="required">
+			<xs:annotation>
+				<xs:documentation>TIPLOC</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attributeGroup ref="ct:CircularTimes"/>
+	</xs:complexType>
+	<xs:complexType name="TS">
+		<xs:annotation>
+			<xs:documentation>Train Status. Update to the "real time" forecast data for a service.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="LateReason" type="ct:DisruptionReasonType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Late running reason for this service. The reason applies to all locations of this service.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Location" type="tns:TSLocation" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Update of forecast data for an individual location in the service's schedule</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="rid" type="ct:RIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>RTTI unique Train Identifier</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="uid" type="ct:UIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>Train UID</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="ssd" type="ct:RTTIDateType" use="required">
+			<xs:annotation>
+				<xs:documentation>Scheduled Start Date</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="isReverseFormation" type="xs:boolean" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Indicates whether a train that divides is working with portions in reverse to their normal formation. The value applies to the whole train. Darwin will not validate that a divide association actually exists for this service.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

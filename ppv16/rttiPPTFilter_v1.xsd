@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://thalesgroup.com/RTTI/PushPortFilter/root_1" xmlns:tns="http://thalesgroup.com/RTTI/PushPortFilter/root_1" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:simpleType name="TiplocType">
+		<xs:annotation>
+			<xs:documentation>The type representing a TIPLOC value</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\S{1,7}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="FilterTiplocs">
+		<xs:annotation>
+			<xs:documentation>Request to filter push port data by the supplied list of TIPLOCs</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence maxOccurs="unbounded">
+				<xs:element name="tiploc" type="tns:TiplocType"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

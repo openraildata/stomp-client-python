@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:pp1="http://thalesgroup.com/RTTI/PushPortStatus/root_1" xmlns:pp2="http://thalesgroup.com/RTTI/PushPortFilter/root_1" xmlns:pp3="http://thalesgroup.com/RTTI/PushPortRequestTD/root_1" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://thalesgroup.com/RTTI/PushPortSetup/root_1" targetNamespace="http://thalesgroup.com/RTTI/PushPortSetup/root_1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="3.0">
+	<xs:import namespace="http://thalesgroup.com/RTTI/PushPortStatus/root_1" schemaLocation="rttiPPTStatus_v1.xsd"/>
+	<xs:import namespace="http://thalesgroup.com/RTTI/PushPortFilter/root_1" schemaLocation="rttiPPTFilter_v1.xsd"/>
+	<xs:import namespace="http://thalesgroup.com/RTTI/PushPortRequestTD/root_1" schemaLocation="rttiPPTRequestTD_v1.xsd"/>
+	<xs:element name="PPSetupReq">
+		<xs:annotation>
+			<xs:documentation>Definition of request messages from clients</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:choice>
+				<xs:element ref="pp1:PPReqVersion"/>
+				<xs:element ref="pp1:PPConnect"/>
+				<xs:element ref="pp2:FilterTiplocs"/>
+				<xs:element ref="pp3:RequestTD"/>
+				<xs:any processContents="lax"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="PPSetupResp">
+		<xs:annotation>
+			<xs:documentation>Definition of response messages to clients</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:choice>
+				<xs:element ref="pp1:PPStatus"/>
+				<xs:any processContents="lax"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

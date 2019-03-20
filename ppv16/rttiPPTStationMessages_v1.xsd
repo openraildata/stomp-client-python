@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:ct="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.thalesgroup.com/rtti/PushPort/StationMessages/v1" targetNamespace="http://www.thalesgroup.com/rtti/PushPort/StationMessages/v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<!--  Copyright (c) 2013 ATOC NRE & Thales -->
+	<!--  Project 753 ATOC REAL TIME TRAIN INFORMATION -->
+	<!--  Project WA063A0 ATOC DARWIN -->
+	<!--  PUSH PORTS STATION MESSAGES SCHEMA -->
+	<!--  
+	DATE			COMMENT
+	========	=======================================================================
+	11/03/2013  	Version 1:
+						Support for DCIS. Separated out to multiple schemas.
+	-->
+	<xs:import namespace="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1" schemaLocation="rttiPPTCommonTypes_v1.xsd"/>
+	<!-- Simple Types -->
+	<xs:simpleType name="MsgCategoryType">
+		<xs:annotation>
+			<xs:documentation>The category of operator message</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Train"/>
+			<xs:enumeration value="Station"/>
+			<xs:enumeration value="Connections"/>
+			<xs:enumeration value="System"/>
+			<xs:enumeration value="Misc"/>
+			<xs:enumeration value="PriorTrains"/>
+			<xs:enumeration value="PriorOther"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MsgSeverityType">
+		<xs:annotation>
+			<xs:documentation>The severity of operator message</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- Complex Types -->
+	<xs:complexType name="StationMessage">
+		<xs:annotation>
+			<xs:documentation>Darwin Workstation Station Message</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Station" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The Stations the message is being applied to</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:attribute name="crs" type="ct:CrsType" use="required"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Msg">
+				<xs:annotation>
+					<xs:documentation>The content of the message</xs:documentation>
+				</xs:annotation>
+				<xs:complexType mixed="true">
+					<xs:choice>
+						<xs:element ref="tns:p" minOccurs="0" maxOccurs="unbounded"/>
+						<xs:element ref="tns:a" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:choice>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:int" use="required"/>
+		<xs:attribute name="cat" type="tns:MsgCategoryType" use="required">
+			<xs:annotation>
+				<xs:documentation>The category of message</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="sev" type="tns:MsgSeverityType" use="required">
+			<xs:annotation>
+				<xs:documentation>The severity of the message</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="suppress" type="xs:boolean" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Whether the train running information is suppressed to the public</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<!-- Elements -->
+	<xs:element name="p">
+		<xs:annotation>
+			<xs:documentation>Defines an HTML paragraph</xs:documentation>
+		</xs:annotation>
+		<xs:complexType mixed="true">
+			<xs:sequence>
+				<xs:element ref="tns:a" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="a">
+		<xs:annotation>
+			<xs:documentation>Defines an HTML anchor</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="href" type="xs:string" use="required"/>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

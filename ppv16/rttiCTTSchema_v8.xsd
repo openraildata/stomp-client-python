@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ct="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1" xmlns:tns="http://www.thalesgroup.com/rtti/XmlTimetable/v8" targetNamespace="http://www.thalesgroup.com/rtti/XmlTimetable/v8" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--  Copyright (c) 2014 Thales Transport & Security Ltd -->
+	<!--  Project 753 ATOC REAL TIME TRAIN INFORMATION -->
+	<!--  Project WA063A0 ATOC DARWIN -->
+	<!--  PUSH PORT TIMETABLE SCHEMA -->
+	<!-- 
+	DATE			COMMENT
+	=========	=================================================================
+	15/11/2005	Added support for Q Trains.
+						Changed 'id' to 'trainId' where it's used for Train ID.
+	20/01/2005	Placed schema in a namespace
+	02/06/2005	Incorporated customer comments
+						Changed PPort to Pport
+	25/11/2005	Issued as version 2.
+	17/05/2006	CCR55 Output Train Status 
+						Released as version 3.0
+	20/06/2006	CCR55 Output Train Category
+	12/12/2007	Version 4.0. Added 'deleted' attribute to Journey
+	20/05/2010	Version 5.0. Added platform numbers and cancellation indicators
+	30/09/2010	Version 6.0. Added linked associations
+	18/07/2011	Version 7.0. Added passing points and working times
+						Changed activity codes from fixed length to variable length.
+	23/06/2014	Version 8.0. Support for DCIS data.
+	-->
+	<xs:import namespace="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1" schemaLocation="rttiPPTCommonTypes_v1.xsd"/>
+	<!--Simple Types-->
+	<xs:simpleType name="CategoryType">
+		<xs:annotation>
+			<xs:documentation>Association Category Type: JJ=Join, VV=Split, LK=Linked, NP=Next-Working</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="JJ"/>
+			<xs:enumeration value="VV"/>
+			<xs:enumeration value="LK"/>
+			<xs:enumeration value="NP"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- Complex Types -->
+	<xs:complexType name="AssocService">
+		<xs:attribute name="rid" type="ct:RIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>RTTI Train ID. Note that since this is an RID, the service must already exist within Darwin.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attributeGroup ref="ct:CircularTimes">
+			<xs:annotation>
+				<xs:documentation>One or more scheduled times to identify the instance of the location in the train schedule where the association occurs.</xs:documentation>
+			</xs:annotation>
+		</xs:attributeGroup>
+	</xs:complexType>
+	<xs:complexType name="Association">
+		<xs:annotation>
+			<xs:documentation>Type describing an association between schedules</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="main" type="tns:AssocService">
+				<xs:annotation>
+					<xs:documentation>The through, previous working or link-to service</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="assoc" type="tns:AssocService">
+				<xs:annotation>
+					<xs:documentation>The starting, terminating, subsequent working or link-from service</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="tiploc" type="ct:TiplocType" use="required">
+			<xs:annotation>
+				<xs:documentation>The TIPLOC of the location where the association occurs.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="category" type="tns:CategoryType" use="required">
+			<xs:annotation>
+				<xs:documentation>Association category</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="isCancelled" type="xs:boolean" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>True if this association is cancelled, i.e. the association exists but will no longer happen.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="isDeleted" type="xs:boolean" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>True if this association is deleted, i.e. the association no longer exists.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:attributeGroup name="SchedLocAttributes">
+		<xs:annotation>
+			<xs:documentation>Group of attributes common to all schedule locations</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="tpl" type="ct:TiplocType" use="required">
+			<xs:annotation>
+				<xs:documentation>TIPLOC</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="act" type="ct:ActivityType" use="optional" default="  ">
+			<xs:annotation>
+				<xs:documentation>Current Activity Codes</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="planAct" type="ct:ActivityType" use="optional">
+			<xs:annotation>
+				<xs:documentation>Planned Activity Codes (if different to current activities)</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="can" type="xs:boolean" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Cancelled</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="plat" type="ct:PlatformType" use="optional">
+			<xs:annotation>
+				<xs:documentation>Platform number</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:attributeGroup>
+	<xs:attributeGroup name="CallPtAttributes">
+		<xs:annotation>
+			<xs:documentation>Group of attributes common to Calling Points</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="pta" type="ct:RTTITimeType" use="optional">
+			<xs:annotation>
+				<xs:documentation>Public Scheduled Time of Arrival</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="ptd" type="ct:RTTITimeType" use="optional">
+			<xs:annotation>
+				<xs:documentation>Public Scheduled Time of Departure</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:attributeGroup>
+	<xs:complexType name="OR">
+		<xs:annotation>
+			<xs:documentation>Defines a Passenger Origin Calling Point</xs:documentation>
+		</xs:annotation>
+		<xs:attributeGroup ref="tns:SchedLocAttributes"/>
+		<xs:attributeGroup ref="tns:CallPtAttributes"/>
+		<xs:attribute name="wta" type="ct:WTimeType" use="optional">
+			<xs:annotation>
+				<xs:documentation>Working Scheduled Time of Arrival</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="wtd" type="ct:WTimeType" use="required">
+			<xs:annotation>
+				<xs:documentation>Working Scheduled Time of Departure</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="fd" type="ct:TiplocType" use="optional">
+			<xs:annotation>
+				<xs:documentation>TIPLOC of False Destination to be used at this location</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="OPOR">
+		<xs:annotation>
+			<xs:documentation>Defines an Operational Origin Calling Point</xs:documentation>
+		</xs:annotation>
+		<xs:attributeGroup ref="tns:SchedLocAttributes"/>
+		<xs:attribute name="wta" type="ct:WTimeType" use="optional">
+			<xs:annotation>
+				<xs:documentation>Working Scheduled Time of Arrival</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="wtd" type="ct:WTimeType" use="required">
+			<xs:annotation>
+				<xs:documentation>Working Scheduled Time of Departure</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="IP">
+		<xs:annotation>
+			<xs:documentation>Defines aPassenger Intermediate Calling Point</xs:documentation>
+		</xs:annotation>
+		<xs:attributeGroup ref="tns:SchedLocAttributes"/>
+		<xs:attributeGroup ref="tns:CallPtAttributes"/>
+		<xs:attribute name="wta" type="ct:WTimeType" use="required">
+			<xs:annotation>
+				<xs:documentation>Working Scheduled Time of Arrival</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="wtd" type="ct:WTimeType" use="required">
+			<xs:annotation>
+				<xs:documentation>Working Scheduled Time of Departure</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="rdelay" type="ct:DelayValueType" use="optional" default="0">
+			<xs:annotation>
+				<xs:documentation>A delay value that is implied by a change to the service's route.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="fd" type="ct:TiplocType" use="optional">
+			<xs:annotation>
+				<xs:documentation>TIPLOC of False Destination to be used at this location</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="OPIP">
+		<xs:annotation>
+			<xs:documentation>Defines an Operational Intermediate Calling Point</xs:documentation>
+		</xs:annotation>
+		<xs:attributeGroup ref="tns:SchedLocAttributes"/>
+		<xs:attribute name="wta" type="ct:WTimeType" use="required">
+			<xs:annotation>
+				<xs:documentation>Working Scheduled Time of Arrival</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="wtd" type="ct:WTimeType" use="required">
+			<xs:annotation>
+				<xs:documentation>Working Scheduled Time of Departure</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="rdelay" type="ct:DelayValueType" use="optional" default="0">
+			<xs:annotation>
+				<xs:documentation>A delay value that is implied by a change to the service's route.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="PP">
+		<xs:annotation>
+			<xs:documentation>Defines an Intermediate Passing Point</xs:documentation>
+		</xs:annotation>
+		<xs:attributeGroup ref="tns:SchedLocAttributes"/>
+		<xs:attribute name="wtp" type="ct:WTimeType" use="required">
+			<xs:annotation>
+				<xs:documentation>Working Scheduled Time of Passing</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="rdelay" type="ct:DelayValueType" use="optional" default="0">
+			<xs:annotation>
+				<xs:documentation>A delay value that is implied by a change to the service's route.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="DT">
+		<xs:annotation>
+			<xs:documentation>Defines a Passenger Destination Calling point</xs:documentation>
+		</xs:annotation>
+		<xs:attributeGroup ref="tns:SchedLocAttributes"/>
+		<xs:attributeGroup ref="tns:CallPtAttributes"/>
+		<xs:attribute name="wta" type="ct:WTimeType" use="required">
+			<xs:annotation>
+				<xs:documentation>Working Scheduled Time of Arrival</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="wtd" type="ct:WTimeType" use="optional">
+			<xs:annotation>
+				<xs:documentation>Working Scheduled Time of Departure</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="rdelay" type="ct:DelayValueType" use="optional" default="0">
+			<xs:annotation>
+				<xs:documentation>A delay value that is implied by a change to the service's route.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="OPDT">
+		<xs:annotation>
+			<xs:documentation>Defines an Operational Destination Calling point</xs:documentation>
+		</xs:annotation>
+		<xs:attributeGroup ref="tns:SchedLocAttributes"/>
+		<xs:attribute name="wta" type="ct:WTimeType" use="required">
+			<xs:annotation>
+				<xs:documentation>Working Scheduled Time of Arrival</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="wtd" type="ct:WTimeType" use="optional">
+			<xs:annotation>
+				<xs:documentation>Working Scheduled Time of Departure</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="rdelay" type="ct:DelayValueType" use="optional" default="0">
+			<xs:annotation>
+				<xs:documentation>A delay value that is implied by a change to the service's route.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="Schedule">
+		<xs:annotation>
+			<xs:documentation>Train Schedule</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:choice minOccurs="2" maxOccurs="unbounded">
+				<xs:element name="OR" type="tns:OR">
+					<xs:annotation>
+						<xs:documentation>Origin location</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="OPOR" type="tns:OPOR">
+					<xs:annotation>
+						<xs:documentation>Operational origin location</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="IP" type="tns:IP">
+					<xs:annotation>
+						<xs:documentation>Intermediate calling location</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="OPIP" type="tns:OPIP">
+					<xs:annotation>
+						<xs:documentation>Intermediate operational calling location</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="PP" type="tns:PP">
+					<xs:annotation>
+						<xs:documentation>Passing location</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="DT" type="tns:DT">
+					<xs:annotation>
+						<xs:documentation>Destination location</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="OPDT" type="tns:OPDT">
+					<xs:annotation>
+						<xs:documentation>Operational destination location</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="cancelReason" type="ct:DisruptionReasonType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Reason for cancellation of service/location</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="rid" type="ct:RIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>RTTI unique Train ID</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="uid" type="ct:UIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>Train UID</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="trainId" type="ct:TrainIdType" use="required">
+			<xs:annotation>
+				<xs:documentation>Train ID (Headcode)</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="ssd" type="ct:RTTIDateType" use="required">
+			<xs:annotation>
+				<xs:documentation>Scheduled Start Date</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="toc" type="ct:TOCType" use="required">
+			<xs:annotation>
+				<xs:documentation>ATOC Code</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="status" type="ct:CIFTrainStatusType" use="optional" default="P">
+			<xs:annotation>
+				<xs:documentation>Type of service, i.e. Train/Bus/Ship.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="trainCat" type="ct:CIFTrainCategoryType" use="optional" default="OO">
+			<xs:annotation>
+				<xs:documentation>Category of service.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="isPassengerSvc" type="xs:boolean" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>True if Darwin classifies the train category as a passenger service.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="deleted" type="xs:boolean" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Service has been deleted and should not be used/displayed.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="isCharter" type="xs:boolean" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Indicates if this service is a charter service.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="qtrain" type="xs:boolean" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>True if this is a Q Train (runs as required) that has not yet been activated. Note that a Q Train that has been activated before the XML Timetable file has been built will not have this attribute set true.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="can" type="xs:boolean" use="optional" default="false"/>
+	</xs:complexType>
+	<!-- Elements -->
+	<xs:element name="PportTimetable">
+		<xs:annotation>
+			<xs:documentation>Push Port Timetable Schema</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Journey" type="tns:Schedule" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Schedule of a service that exists in Darwin</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Association" type="tns:Association" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>An association between two schedules</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="timetableID" type="ct:TimetableIDType" use="required">
+				<xs:annotation>
+					<xs:documentation>The ID of the RTTI timetable from which this XML timetable was generated.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

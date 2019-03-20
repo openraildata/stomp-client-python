@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://thalesgroup.com/RTTI/PushPortStatus/root_1" xmlns:tns="http://thalesgroup.com/RTTI/PushPortStatus/root_1" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:simpleType name="ErrorMsgType">
+		<xs:annotation>
+			<xs:documentation>Error Message Type</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="128"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ErrorCodeType">
+		<xs:annotation>
+			<xs:documentation>Error Code Type</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="32"/>
+			<xs:minLength value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="StatusType">
+		<xs:annotation>
+			<xs:documentation>Status Code Type</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="tns:ErrorMsgType">
+				<xs:attribute name="code" type="tns:ErrorCodeType" use="required"/>
+				<xs:anyAttribute processContents="lax"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:element name="PPStatus">
+		<xs:annotation>
+			<xs:documentation>Setup phase status/heartbeat response</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="tns:StatusType"/>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="PPReqVersion">
+		<xs:annotation>
+			<xs:documentation>Request the schema versions required by the client</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="version" use="required">
+				<xs:annotation>
+					<xs:documentation>The namespace of the Push Port data schema supported by the client.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="ttversion" use="required">
+				<xs:annotation>
+					<xs:documentation>The namespace of the Push Port Timetable schema supported by the client.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="ttrefversion" use="required">
+				<xs:annotation>
+					<xs:documentation>The namespace of the Push Port Timetable Reference data schema supported by the client.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="PPConnect">
+		<xs:annotation>
+			<xs:documentation>Signal end of the setup phase and switch to use the requested PP data schema.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+</xs:schema>

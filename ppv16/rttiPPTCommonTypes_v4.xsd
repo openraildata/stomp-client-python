@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v4" targetNamespace="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v4" elementFormDefault="qualified" attributeFormDefault="unqualified" version="4.0">
+	<!--  Copyright (c) 2017 RDG & Thales -->
+	<!--  Project 753 ATOC REAL TIME TRAIN INFORMATION -->
+	<!--  PUSH PORTS COMMON TYPES SCHEMA -->
+	<!--  
+	DATE			COMMENT
+	========	=======================================================================
+	01/10/2017  	Version 4:
+						Added types for toilet information in Train Formation data. (Note this file version does not replace previous versions, but is in addition).
+	-->
+	<!-- Simple Types -->
+	<xs:simpleType name="ToiletType">
+		<xs:annotation>
+			<xs:documentation>An indication of the availability of a toilet in a coach in a train formation. E.g. "Unknown", "None" , "Standard" or "Accessible". Note that other values may be supplied in the future without a schema change.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="ToiletStatus">
+		<xs:annotation>
+			<xs:documentation>The service status of a toilet in coach formation data.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Unknown"/>
+			<xs:enumeration value="InService"/>
+			<xs:enumeration value="NotInService"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- Complex Types -->
+	<xs:complexType name="ToiletAvailabilityType">
+		<xs:annotation>
+			<xs:documentation>The availability of a toilet in coach formation data. If no availability is supplied, it should be assumed to have the value "Unknown".</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="tns:ToiletType">
+				<xs:attribute name="status" type="tns:ToiletStatus" use="optional" default="InService">
+					<xs:annotation>
+						<xs:documentation>The service status of this toilet. E.g. "Unknown", "InService" or "NotInService".</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+</xs:schema>

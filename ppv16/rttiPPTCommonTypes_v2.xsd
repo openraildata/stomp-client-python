@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v2" targetNamespace="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v2" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.0">
+	<!--  Copyright (c) 2016 ATOC NRE & Thales -->
+	<!--  Project 753 ATOC REAL TIME TRAIN INFORMATION -->
+	<!--  PUSH PORTS COMMON TYPES SCHEMA -->
+	<!--  
+	DATE			COMMENT
+	========	=======================================================================
+	30/03/2016  	Version 2:
+						Added type for RSID. (Note this file version does not replace v1, but is in addition).
+	-->
+	<!-- Simple Types -->
+	<xs:simpleType name="RSIDType">
+		<xs:annotation>
+			<xs:documentation>A Retail Service Identifier. Note that this may be either a full 8-character "portion identifier", or a base 6-character identifier, according to the available information provided to Darwin.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="6"/>
+			<xs:maxLength value="8"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

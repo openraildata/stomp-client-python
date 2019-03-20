@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2012 sp1 (http://www.altova.com) by D Barnard (Thales Information Systems) -->
+<xs:schema xmlns:status="http://thalesgroup.com/RTTI/PushPortStatus/root_1" xmlns:ct="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1" xmlns:sch="http://www.thalesgroup.com/rtti/PushPort/Schedules/v1" xmlns:for="http://www.thalesgroup.com/rtti/PushPort/Forecasts/v2" xmlns:tor="http://www.thalesgroup.com/rtti/PushPort/TrainOrder/v1" xmlns:sm="http://www.thalesgroup.com/rtti/PushPort/StationMessages/v1" xmlns:ta="http://www.thalesgroup.com/rtti/PushPort/TrainAlerts/v1" xmlns:td="http://www.thalesgroup.com/rtti/PushPort/TDData/v1" xmlns:alm="http://www.thalesgroup.com/rtti/PushPort/Alarms/v1" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.thalesgroup.com/rtti/PushPort/v12" targetNamespace="http://www.thalesgroup.com/rtti/PushPort/v12" elementFormDefault="qualified" attributeFormDefault="unqualified" version="12.0">
+	<!--  Copyright (c) 2014 ATOC NRE & Thales -->
+	<!--  Project 753 ATOC REAL TIME TRAIN INFORMATION -->
+	<!--  Project WA063A0 ATOC DARWIN -->
+	<!--  PUSH PORTS SCHEMA -->
+	<!--  
+	DATE			COMMENT
+	========	=======================================================================
+	Old history removed at v11
+
+	11/03/2013  	Version 11:
+						Support for DCIS. Separated out to multiple schemas.
+	14/06/2013  	Version 12:
+						Added updateOrigin attribute to uR responses.
+	-->
+	<xs:import namespace="http://thalesgroup.com/RTTI/PushPortStatus/root_1" schemaLocation="rttiPPTStatus_v1.xsd"/>
+	<xs:import namespace="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1" schemaLocation="rttiPPTCommonTypes_v1.xsd"/>
+	<xs:import namespace="http://www.thalesgroup.com/rtti/PushPort/Schedules/v1" schemaLocation="rttiPPTSchedules_v1.xsd"/>
+	<xs:import namespace="http://www.thalesgroup.com/rtti/PushPort/Forecasts/v2" schemaLocation="rttiPPTForecasts_v2.xsd"/>
+	<xs:import namespace="http://www.thalesgroup.com/rtti/PushPort/TrainOrder/v1" schemaLocation="rttiPPTTrainOrder_v1.xsd"/>
+	<xs:import namespace="http://www.thalesgroup.com/rtti/PushPort/StationMessages/v1" schemaLocation="rttiPPTStationMessages_v1.xsd"/>
+	<xs:import namespace="http://www.thalesgroup.com/rtti/PushPort/TrainAlerts/v1" schemaLocation="rttiPPTTrainAlerts_v1.xsd"/>
+	<xs:import namespace="http://www.thalesgroup.com/rtti/PushPort/TDData/v1" schemaLocation="rttiPPTTDData_v1.xsd"/>
+	<xs:import namespace="http://www.thalesgroup.com/rtti/PushPort/Alarms/v1" schemaLocation="rttiPPTAlarms_v1.xsd"/>
+	<!-- Complex Types -->
+	<xs:complexType name="DataResponse">
+		<xs:sequence>
+			<xs:element name="schedule" type="sch:Schedule" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Train Schedule</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="deactivated" type="sch:DeactivatedSchedule" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Notification that a Train Schedule is now deactivated in Darwin.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="association" type="sch:Association" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Association between schedules</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TS" type="for:TS" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Train Status</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OW" type="sm:StationMessage" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Darwin Workstation Station Message</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="trainAlert" type="ta:TrainAlert" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Train Alert</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="trainOrder" type="tor:TrainOrder" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>The order that trains are expected to call/pass a particular station platform</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="trackingID" type="td:TrackingID" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Indicate a corrected Tracking ID (headcode) for a service in a TD berth.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="alarm" type="alm:RTTIAlarm" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A Darwin alarm</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- Elements -->
+	<xs:element name="Pport">
+		<xs:annotation>
+			<xs:documentation>Push Ports Schema</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:choice>
+				<xs:element name="QueryTimetable">
+					<xs:annotation>
+						<xs:documentation>Query for the current timetable ID</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="TimeTableId">
+					<xs:annotation>
+						<xs:documentation>Response for the current timetable ID</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="ct:TimetableIDType">
+								<xs:attribute name="ttfile" type="ct:TimetableFilenameType" use="required"/>
+								<xs:attribute name="ttreffile" type="ct:TimetableFilenameType" use="required"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="GetSnapshotReq">
+					<xs:annotation>
+						<xs:documentation>Request a standard snapshot of current database</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:attribute name="viaftp" type="xs:boolean" use="optional" default="false">
+							<xs:annotation>
+								<xs:documentation>If true, then resulting snapshot data is fetched by the client via FTP</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="GetFullSnapshotReq">
+					<xs:annotation>
+						<xs:documentation>Request a full snapshot of current database</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:attribute name="viaftp" type="xs:boolean" use="optional" default="false">
+							<xs:annotation>
+								<xs:documentation>If true, then resulting snapshot data is fetched by the client via FTP</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="SnapshotId" type="ct:SnapshotIDType">
+					<xs:annotation>
+						<xs:documentation>Defines an ID for recovering snapshot data via FTP</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="StartUpdateReq">
+					<xs:annotation>
+						<xs:documentation>Start sending available updates.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="StopUpdateReq">
+					<xs:annotation>
+						<xs:documentation>Stop sending available updates.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="FailureResp">
+					<xs:annotation>
+						<xs:documentation>Failure Response</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="status:StatusType">
+								<xs:attribute name="requestSource" type="ct:SourceTypeInst" use="optional">
+									<xs:annotation>
+										<xs:documentation>The DCIS source that generated this update</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+								<xs:attribute name="requestID" type="ct:DCISRequestID" use="optional">
+									<xs:annotation>
+										<xs:documentation>The DCISRequestID value provided by the originator of this update. Used in conjunction with the updateSource attribute to ensure uniqueness</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="uR">
+					<xs:annotation>
+						<xs:documentation>Update Response</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:complexContent>
+							<xs:extension base="tns:DataResponse">
+								<xs:attribute name="updateOrigin" type="xs:string" use="optional">
+									<xs:annotation>
+										<xs:documentation>A string describing the type of system that originated this update, e.g. "CIS" or "Darwin".</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+								<xs:attribute name="requestSource" type="ct:SourceTypeInst" use="optional">
+									<xs:annotation>
+										<xs:documentation>The source instance that generated this update, usually a CIS instance.</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+								<xs:attribute name="requestID" type="ct:DCISRequestID" use="optional">
+									<xs:annotation>
+										<xs:documentation>The DCISRequestID value provided by the originator of this update. Used in conjunction with the requestSource attribute to ensure uniqueness</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+							</xs:extension>
+						</xs:complexContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="sR" type="tns:DataResponse">
+					<xs:annotation>
+						<xs:documentation>Snapshot Response</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+			<xs:attribute name="ts" type="ct:RTTIDateTimeType" use="required">
+				<xs:annotation>
+					<xs:documentation>Local Timestamp</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="version" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

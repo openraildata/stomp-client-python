@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:ct="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.thalesgroup.com/rtti/PushPort/TDData/v1" targetNamespace="http://www.thalesgroup.com/rtti/PushPort/TDData/v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<!--  Copyright (c) 2013 ATOC NRE & Thales -->
+	<!--  Project 753 ATOC REAL TIME TRAIN INFORMATION -->
+	<!--  Project WA063A0 ATOC DARWIN -->
+	<!--  PUSH PORTS TD DATA SCHEMA -->
+	<!--  
+	DATE			COMMENT
+	========	=======================================================================
+	11/03/2013  	Version 1:
+						Support for DCIS.
+	-->
+	<xs:import namespace="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1" schemaLocation="rttiPPTCommonTypes_v1.xsd"/>
+	<!-- Simple Types -->
+	<!-- Complex Types -->
+	<xs:complexType name="FullTDBerthID">
+		<xs:simpleContent>
+			<xs:extension base="ct:TDBerthIDType">
+				<xs:attribute name="area" type="ct:TDAreaIDType" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="TrackingID">
+		<xs:annotation>
+			<xs:documentation>Indicate a corrected Tracking ID (headcode) for a service in a TD berth.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="berth" type="tns:FullTDBerthID">
+				<xs:annotation>
+					<xs:documentation>The TD berth where the incorrectly reported train has been identified to be. Note that this berth is that which was reported to Darwin and there is no guarantee that the train is still in this berth at any subsequent point in time.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="incorrectTrainID" type="ct:TrainIdType">
+				<xs:annotation>
+					<xs:documentation>The incorrect Train ID (headcode) that is being reported by TD.NET.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="correctTrainID" type="ct:TrainIdType">
+				<xs:annotation>
+					<xs:documentation>The correct Train ID (headcode) that should be reported by TD.NET.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

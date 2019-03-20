@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:ct="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.thalesgroup.com/rtti/PushPort/Alarms/v1" targetNamespace="http://www.thalesgroup.com/rtti/PushPort/Alarms/v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<!--  Copyright (c) 2013 ATOC NRE & Thales -->
+	<!--  Project 753 ATOC REAL TIME TRAIN INFORMATION -->
+	<!--  Project WA063A0 ATOC DARWIN -->
+	<!--  PUSH PORTS ALARMS SCHEMA -->
+	<!--  
+	DATE			COMMENT
+	========	=======================================================================
+	11/03/2013  	Version 1:
+						Support for DCIS.
+	-->
+	<xs:import namespace="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1" schemaLocation="rttiPPTCommonTypes_v1.xsd"/>
+	<!-- Simple Types -->
+	<xs:simpleType name="AlarmID">
+		<xs:annotation>
+			<xs:documentation>Type representing a unique Darwin alarm identifier.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<!-- Complex Types -->
+	<xs:complexType name="RTTIAlarmData">
+		<xs:annotation>
+			<xs:documentation>Type describing each type of alarm that can be set.</xs:documentation>
+		</xs:annotation>
+		<xs:choice>
+			<xs:element name="tdAreaFail" type="ct:TDAreaIDType">
+				<xs:annotation>
+					<xs:documentation>Alarm for a single TD area failure. Contents identify the failed area code.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="tdFeedFail">
+				<xs:annotation>
+					<xs:documentation>Alarm for the failure of the entire TD feed into Darwin.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="tyrellFeedFail">
+				<xs:annotation>
+					<xs:documentation>Alarm for the failure of the Tyrell feed into Darwin.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="id" type="tns:AlarmID" use="required">
+			<xs:annotation>
+				<xs:documentation>Unique identifier for this alarm</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="RTTIAlarm">
+		<xs:annotation>
+			<xs:documentation>An update to a Darwin alarm.</xs:documentation>
+		</xs:annotation>
+		<xs:choice>
+			<xs:element name="set" type="tns:RTTIAlarmData">
+				<xs:annotation>
+					<xs:documentation>Set a new alarm.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="clear" type="tns:AlarmID">
+				<xs:annotation>
+					<xs:documentation>Clear an existing alarm. The contents identify the unique alarm identifier that has been cleared.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+</xs:schema>

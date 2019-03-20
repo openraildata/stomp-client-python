@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:tns="http://thalesgroup.com/RTTI/PushPortRequestTD/root_1" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://thalesgroup.com/RTTI/PushPortRequestTD/root_1" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:simpleType name="TDAreaCode">
+		<xs:annotation>
+			<xs:documentation>The type representing a Train Describer Area code</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\S{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="RequestTD">
+		<xs:annotation>
+			<xs:documentation>Request to filter TD-related push port data by the supplied list of TD Area codes</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence maxOccurs="unbounded">
+				<xs:element name="td" type="tns:TDAreaCode"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

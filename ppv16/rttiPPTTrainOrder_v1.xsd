@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ct="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1" xmlns:tns="http://www.thalesgroup.com/rtti/PushPort/TrainOrder/v1" targetNamespace="http://www.thalesgroup.com/rtti/PushPort/TrainOrder/v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<!--  Copyright (c) 2014 ATOC NRE & Thales -->
+	<!--  Project 753 ATOC REAL TIME TRAIN INFORMATION -->
+	<!--  Project WA063A0 ATOC DARWIN -->
+	<!--  PUSH PORTS TRAIN ORDER SCHEMA -->
+	<!--  
+	DATE			COMMENT
+	========	=======================================================================
+	19/06/2014  	Version 1:
+						Separated out to multiple schema.
+	-->
+	<xs:import namespace="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1" schemaLocation="rttiPPTCommonTypes_v1.xsd"/>
+	<!-- Simple Types -->
+	<!-- Complex Types -->
+	<xs:complexType name="TrainOrderItem">
+		<xs:annotation>
+			<xs:documentation>Describes the identifier of a train in the train order</xs:documentation>
+		</xs:annotation>
+		<xs:choice>
+			<xs:element name="rid">
+				<xs:annotation>
+					<xs:documentation>For trains in the train order where the train is the Darwin timetable, it will be identified by its RID</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="ct:RIDType">
+							<xs:attributeGroup ref="ct:CircularTimes">
+								<xs:annotation>
+									<xs:documentation>One or more scheduled times to identify the instance of the location in the train schedule for which the train order is set.</xs:documentation>
+								</xs:annotation>
+							</xs:attributeGroup>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="trainID" type="ct:TrainIdType">
+				<xs:annotation>
+					<xs:documentation>Where a train in the train order is not in the Darwin timetable, a Train ID (headcode) will be supplied</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="TrainOrderData">
+		<xs:annotation>
+			<xs:documentation>Defines the sequence of trains making up the train order</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="first" type="tns:TrainOrderItem">
+				<xs:annotation>
+					<xs:documentation>The first train in the train order.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:sequence minOccurs="0">
+				<xs:element name="second" type="tns:TrainOrderItem">
+					<xs:annotation>
+						<xs:documentation>The second train in the train order.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="third" type="tns:TrainOrderItem" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>The third train in the train order.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TrainOrder">
+		<xs:annotation>
+			<xs:documentation>Defines the expected Train order at a platform</xs:documentation>
+		</xs:annotation>
+		<xs:choice>
+			<xs:element name="set" type="tns:TrainOrderData"/>
+			<xs:element name="clear">
+				<xs:annotation>
+					<xs:documentation>Clear the current train order</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="tiploc" type="ct:TiplocType" use="required">
+			<xs:annotation>
+				<xs:documentation>The tiploc where the train order applies</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="crs" type="ct:CrsType" use="required">
+			<xs:annotation>
+				<xs:documentation>The CRS code of the station where the train order applies</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="platform" type="ct:PlatformType" use="required">
+			<xs:annotation>
+				<xs:documentation>The platform number where the train order applies</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

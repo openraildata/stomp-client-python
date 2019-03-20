@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v3" targetNamespace="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v3" elementFormDefault="qualified" attributeFormDefault="unqualified" version="3.0">
+	<!--  Copyright (c) 2017 RDG & Thales -->
+	<!--  Project 753 ATOC REAL TIME TRAIN INFORMATION -->
+	<!--  PUSH PORTS COMMON TYPES SCHEMA -->
+	<!--  
+	DATE			COMMENT
+	========	=======================================================================
+	02/02/2017  	Version 3:
+						Added types for Train Formations and Loading. (Note this file version does not replace previous versions, but is in addition).
+	-->
+	<!-- Simple Types -->
+	<xs:simpleType name="FormationIDType">
+		<xs:annotation>
+			<xs:documentation>A unique identifier for a train formation.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="20"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="LoadingValue">
+		<xs:annotation>
+			<xs:documentation>A value representing the loading of a train coach as a percentage (0-100%).</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:unsignedInt">
+			<xs:maxInclusive value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CoachNumberType">
+		<xs:annotation>
+			<xs:documentation>A Coach number/identifier in a train formation. E.g. "A" or "12".</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CoachClassType">
+		<xs:annotation>
+			<xs:documentation>An indication of the class of a coach in a train formation. E.g. "First", "Standard" or "Mixed".</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+</xs:schema>
