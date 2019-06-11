@@ -17,22 +17,15 @@
 #
 
 import stomp
-import zlib
-import io
 import time
 import socket
 
-try:
-    import PPv16
-except ModuleNotFoundError:
-    print("Please configure the client following steps in README.md!")
-
-USERNAME = ''
-PASSWORD = ''
-HOSTNAME = 'darwin-dist-44ae45.nationalrail.co.uk'
-HOSTPORT = 61613
+USERNAME = 'NROD_USERNAME'
+PASSWORD = 'NROD_PASSWORD'
+HOSTNAME = 'datafeeds.networkrail.co.uk'
+HOSTPORT = 61618
 # Always prefixed by /topic/ (it's not a queue, it's a topic)
-TOPIC='/topic/darwin.pushport-v16'
+TOPIC='/topic/TD_LNE_GN_SIG_AREA'
 
 CLIENT_ID = socket.getfqdn()
 HEARTBEAT_INTERVAL_MS = 15000
@@ -80,17 +73,7 @@ class StompClient(stomp.ConnectionListener):
 
     def on_message(self, headers, message):
         try:
-            print('\n----\nGot a message!')
-            # print('\n----\nGot a message!\n\t%s' % message)
-            bio = io.BytesIO()
-            bio.write(str.encode('utf-16'))
-            bio.seek(0)
-            msg = zlib.decompress(message, zlib.MAX_WBITS | 32)
-            print('\n\t* Decompressed message: %s' % msg)
-            obj = PPv16.CreateFromDocument(msg)
-            print('\n\t* Received a Push Port message from %s' % obj.ts)
-            print(obj)
-            print('\n\t* Raw XML is:\n\t%s' % msg)
+            print('\n---\nGot message %s' % message)
         except Exception as e:
             print("\n\tError: %s\n--------\n" % str(e))
 
