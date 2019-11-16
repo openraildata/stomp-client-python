@@ -12,9 +12,8 @@ to the 'Darwin' feed.
 Configuration
 -------------
 
-Edit `opendata-nationalrail-client.py` and set the USERNAME, PASSWORD and
-HOSTNAME variables to the values shown in 'Username', 'Password' and 'Live Feed
-Topic' on the 'My Feeds' page.
+Edit `opendata-nationalrail-client.py` and set the USERNAME, PASSWORD,
+HOSTNAME and HOSTPORT variables to the values shown in 'Username', 'Password', 'Messaging host' and 'STOMP Port' on the 'My Feeds' page.
 
 Leave CLIENT_ID set to socket.getfqdn() - this will use the hostname of your
 client for the durable subscription.  You may need to change this to something
