@@ -12,20 +12,20 @@ to the 'Darwin' feed.
 Configuration
 -------------
 
-Edit `opendata-nationalrail-client.py` and set the USERNAME, PASSWORD,
-HOSTNAME and HOSTPORT variables to the values shown in 'Username', 'Password', 
+Edit `opendata-nationalrail-client.py` and set the `USERNAME`, `PASSWORD`,
+`HOSTNAME` and `HOSTPORT` variables to the values shown in 'Username', 'Password', 
 'Messaging host' and 'STOMP Port' on the 'My Feeds' page.
 
-Leave CLIENT_ID set to socket.getfqdn() - this will use the hostname of your
+Leave `CLIENT_ID` set to socket.getfqdn() - this will use the hostname of your
 client for the durable subscription.  You may need to change this to something
 else if you want to fail over the subscription to a different client.  In this
 case, you could use your username.
 
-The HEARTBEAT_INTERVAL_MS is set by default to 15 seconds (15,000ms) - this
+The `HEARTBEAT_INTERVAL_MS` is set by default to 15 seconds (15,000ms) - this
 should be sufficient for almost every application.  Don't change it unless you
 have a good reason to do so.
 
-RECONNECT_DELAY_SECS will enforce a 15-second delay before exiting.  This will
+`RECONNECT_DELAY_SECS` will enforce a 15-second delay before exiting.  This will
 let you run the client in a loop, such as through a shell script, and protect
 against you accidentally degrading the service for everyone by reconnecting far
 too frequently. 
@@ -38,7 +38,7 @@ Generating classes
 The messages are produced in XML format, and a good way to consume them is by
 using generated classes with [PyXB](https://pypi.org/project/PyXB/). 
 
-pyxbgen --schema-root=ppv16 --module PPv16 rttiPPTSchema_v16.xsd
+`pyxbgen --schema-root=ppv16 --module PPv16 rttiPPTSchema_v16.xsd`
 
 Running the code
 ----------------
