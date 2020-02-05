@@ -43,7 +43,9 @@ if USERNAME == '':
 
 
 def connect_and_subscribe(connection):
-    connection.start()
+
+    if stomp.__version__[0] < 5:
+        connection.start()
 
     connect_header = {'client-id': USERNAME + '-' + CLIENT_ID}
     subscribe_header = {'activemq.subscriptionName': CLIENT_ID}

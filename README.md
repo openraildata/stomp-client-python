@@ -30,7 +30,7 @@ let you run the client in a loop, such as through a shell script, and protect
 against you accidentally degrading the service for everyone by reconnecting far
 too frequently. 
 
-Finally, install the required dependencies by running `pip install "stomp.py<5" pyxb`.
+Finally, install the required dependencies by running `pip install stomp.py pyxb`.
  
 Generating classes
 ------------------
