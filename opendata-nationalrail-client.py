@@ -32,7 +32,7 @@ PASSWORD = ''
 HOSTNAME = 'darwin-dist-44ae45.nationalrail.co.uk'
 HOSTPORT = 61613
 # Always prefixed by /topic/ (it's not a queue, it's a topic)
-TOPIC='/topic/darwin.pushport-v16'
+TOPIC = '/topic/darwin.pushport-v16'
 
 CLIENT_ID = socket.getfqdn()
 HEARTBEAT_INTERVAL_MS = 15000

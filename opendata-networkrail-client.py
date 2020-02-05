@@ -25,7 +25,7 @@ PASSWORD = 'NROD_PASSWORD'
 HOSTNAME = 'datafeeds.networkrail.co.uk'
 HOSTPORT = 61618
 # Always prefixed by /topic/ (it's not a queue, it's a topic)
-TOPIC='/topic/TD_LNE_GN_SIG_AREA'
+TOPIC = '/topic/TD_LNE_GN_SIG_AREA'
 
 CLIENT_ID = socket.getfqdn()
 HEARTBEAT_INTERVAL_MS = 15000
