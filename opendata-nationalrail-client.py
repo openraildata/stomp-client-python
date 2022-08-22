@@ -1,6 +1,6 @@
 #
 # National Rail Open Data client demonstrator
-# Copyright (C)2019 OpenTrainTimes Ltd.
+# Copyright (C)2019-2022 OpenTrainTimes Ltd.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,11 +21,14 @@ import zlib
 import io
 import time
 import socket
+import logging
+
+logging.basicConfig(format='%(asctime)s %(levelname)s\t%(message)s', level=logging.INFO)
 
 try:
     import PPv16
 except ModuleNotFoundError:
-    print("Please configure the client following steps in README.md!")
+    logging.error("Class files not found - please configure the client following steps in README.md!")
 
 USERNAME = ''
 PASSWORD = ''
@@ -39,11 +42,10 @@ HEARTBEAT_INTERVAL_MS = 15000
 RECONNECT_DELAY_SECS = 15
 
 if USERNAME == '':
-    raise Exception("Please configure your username and password in opendata-nationalrail-client.py!")
+    logging.error("Username not set - please configure your username and password in opendata-nationalrail-client.py!")
 
 
 def connect_and_subscribe(connection):
-
     if stomp.__version__[0] < 5:
         connection.start()
 
@@ -64,37 +66,37 @@ def connect_and_subscribe(connection):
 class StompClient(stomp.ConnectionListener):
 
     def on_heartbeat(self):
-        print('Received a heartbeat')
+        logging.info('Received a heartbeat')
 
     def on_heartbeat_timeout(self):
-        print('ERROR: Heartbeat timeout')
+        logging.error('Heartbeat timeout')
 
     def on_error(self, headers, message):
-        print('ERROR: %s' % message)
+        logging.error(message)
 
     def on_disconnected(self):
-        print('Disconnected waiting %s seconds before exiting' % RECONNECT_DELAY_SECS)
+        logging.warning('Disconnected - waiting %s seconds before exiting' % RECONNECT_DELAY_SECS)
         time.sleep(RECONNECT_DELAY_SECS)
         exit(-1)
 
     def on_connecting(self, host_and_port):
-        print('Connecting to ' + host_and_port[0])
+        logging.info('Connecting to ' + host_and_port[0])
 
-    def on_message(self, headers, message):
+    def on_message(self, frame):
+        logging.info(frame)
         try:
-            print('\n----\nGot a message!')
-            # print('\n----\nGot a message!\n\t%s' % message)
+            logging.info('Message sequence=%s, type=%s received', frame.headers['SequenceNumber'],
+                         frame.headers['MessageType'])
             bio = io.BytesIO()
             bio.write(str.encode('utf-16'))
             bio.seek(0)
-            msg = zlib.decompress(message, zlib.MAX_WBITS | 32)
-            print('\n\t* Decompressed message: %s' % msg)
+            msg = zlib.decompress(frame.body, zlib.MAX_WBITS | 32)
+            logging.debug(msg)
             obj = PPv16.CreateFromDocument(msg)
-            print('\n\t* Received a Push Port message from %s' % obj.ts)
-            print(obj)
-            print('\n\t* Raw XML is:\n\t%s' % msg)
+            logging.info("Successfully received a Darwin Push Port message from %s", obj.ts)
+            logging.debug('Raw XML=%s' % msg)
         except Exception as e:
-            print("\n\tError: %s\n--------\n" % str(e))
+            logging.error(str(e))
 
 
 conn = stomp.Connection12([(HOSTNAME, HOSTPORT)],
