@@ -16,24 +16,27 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+import os
 import stomp
 import zlib
 import io
 import time
 import socket
 import logging
+from dotenv import load_dotenv
 
-logging.basicConfig(format='%(asctime)s %(levelname)s\t%(message)s', level=logging.INFO)
+load_dotenv()
+
+USERNAME = os.getenv('USERNAME')
+PASSWORD = os.getenv('PASSWORD')
+HOSTNAME = os.getenv('HOSTNAME')
+HOSTPORT = os.getenv('HOSTPORT')
 
 try:
     import PPv16
 except ModuleNotFoundError:
     logging.error("Class files not found - please configure the client following steps in README.md!")
 
-USERNAME = ''
-PASSWORD = ''
-HOSTNAME = 'darwin-dist-44ae45.nationalrail.co.uk'
-HOSTPORT = 61613
 # Always prefixed by /topic/ (it's not a queue, it's a topic)
 TOPIC = '/topic/darwin.pushport-v16'
 
