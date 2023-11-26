@@ -28,93 +28,106 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-USERNAME = os.getenv('USERNAME')
-PASSWORD = os.getenv('PASSWORD')
-HOSTNAME = os.getenv('HOSTNAME')
-HOSTPORT = os.getenv('HOSTPORT')
+USERNAME = os.getenv("USERNAME")
+PASSWORD = os.getenv("PASSWORD")
+HOSTNAME = os.getenv("HOSTNAME")
+HOSTPORT = os.getenv("HOSTPORT")
 
 debug: bool = False
 # if debug in CL args, set logging level to debug
-if len(sys.argv) > 1 and sys.argv[1] == 'debug':
+if len(sys.argv) > 1 and sys.argv[1] == "debug":
     debug = True
 
-logging.basicConfig(format='%(asctime)s %(levelname)s\t%(message)s', level=logging.DEBUG if debug else logging.INFO)
+logging.basicConfig(
+    format="%(asctime)s %(levelname)s\t%(message)s",
+    level=logging.DEBUG if debug else logging.INFO,
+)
 
 try:
     import PPv16
 except ModuleNotFoundError:
-    logging.error("Class files not found - please configure the client following steps in README.md!")
+    logging.error(
+        "Class files not found - please configure the client following steps in README.md!"
+    )
 
 # Always prefixed by /topic/ (it's not a queue, it's a topic)
-TOPIC = '/topic/darwin.pushport-v16'
+TOPIC = "/topic/darwin.pushport-v16"
 
 CLIENT_ID = socket.getfqdn()
 HEARTBEAT_INTERVAL_MS = 15000
 RECONNECT_DELAY_SECS = 15
 
-if USERNAME == '':
-    logging.error("Username not set - please configure your username and password in opendata-nationalrail-client.py!")
+if USERNAME == "":
+    logging.error(
+        "Username not set - please configure your username and password in opendata-nationalrail-client.py!"
+    )
 
 
 def connect_and_subscribe(connection):
     if stomp.__version__[0] < 5:
         connection.start()
 
-    connect_header = {'client-id': USERNAME + '-' + CLIENT_ID}
-    subscribe_header = {'activemq.subscriptionName': CLIENT_ID}
+    connect_header = {"client-id": USERNAME + "-" + CLIENT_ID}
+    subscribe_header = {"activemq.subscriptionName": CLIENT_ID}
 
-    connection.connect(username=USERNAME,
-                       passcode=PASSWORD,
-                       wait=True,
-                       headers=connect_header)
+    connection.connect(
+        username=USERNAME, passcode=PASSWORD, wait=True, headers=connect_header
+    )
 
-    connection.subscribe(destination=TOPIC,
-                         id='1',
-                         ack='auto',
-                         headers=subscribe_header)
+    connection.subscribe(
+        destination=TOPIC, id="1", ack="auto", headers=subscribe_header
+    )
 
 
 class StompClient(stomp.ConnectionListener):
-
     def on_heartbeat(self):
-        logging.info('Received a heartbeat')
+        logging.info("Received a heartbeat")
 
     def on_heartbeat_timeout(self):
-        logging.error('Heartbeat timeout')
+        logging.error("Heartbeat timeout")
 
     def on_error(self, headers, message):
         logging.error(message)
 
     def on_disconnected(self):
-        logging.warning('Disconnected - waiting %s seconds before exiting' % RECONNECT_DELAY_SECS)
+        logging.warning(
+            "Disconnected - waiting %s seconds before exiting" % RECONNECT_DELAY_SECS
+        )
         time.sleep(RECONNECT_DELAY_SECS)
         exit(-1)
 
     def on_connecting(self, host_and_port):
-        logging.info('Connecting to ' + host_and_port[0])
+        logging.info("Connecting to " + host_and_port[0])
 
     def on_message(self, frame):
         logging.info(frame)
         try:
-            logging.info('Message sequence=%s, type=%s received', frame.headers['SequenceNumber'],
-                         frame.headers['MessageType'])
+            logging.info(
+                "Message sequence=%s, type=%s received",
+                frame.headers["SequenceNumber"],
+                frame.headers["MessageType"],
+            )
             bio = io.BytesIO()
-            bio.write(str.encode('utf-16'))
+            bio.write(str.encode("utf-16"))
             bio.seek(0)
             msg = zlib.decompress(frame.body, zlib.MAX_WBITS | 32)
             logging.debug(msg)
             obj = PPv16.CreateFromDocument(msg)
-            logging.info("Successfully received a Darwin Push Port message from %s", obj.ts)
-            logging.debug('Raw XML=%s' % msg)
+            logging.info(
+                "Successfully received a Darwin Push Port message from %s", obj.ts
+            )
+            logging.debug("Raw XML=%s" % msg)
         except Exception as e:
             logging.error(str(e))
 
 
-conn = stomp.Connection12([(HOSTNAME, HOSTPORT)],
-                          auto_decode=False,
-                          heartbeats=(HEARTBEAT_INTERVAL_MS, HEARTBEAT_INTERVAL_MS))
+conn = stomp.Connection12(
+    [(HOSTNAME, HOSTPORT)],
+    auto_decode=False,
+    heartbeats=(HEARTBEAT_INTERVAL_MS, HEARTBEAT_INTERVAL_MS),
+)
 
-conn.set_listener('', StompClient())
+conn.set_listener("", StompClient())
 connect_and_subscribe(conn)
 
 while True:
