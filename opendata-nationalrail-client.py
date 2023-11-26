@@ -91,10 +91,10 @@ class StompClient(stomp.ConnectionListener):
 
     def on_disconnected(self):
         logging.warning(
-            "Disconnected - waiting %s seconds before exiting" % RECONNECT_DELAY_SECS
+            "Disconnected - waiting %s seconds before exiting", RECONNECT_DELAY_SECS
         )
         time.sleep(RECONNECT_DELAY_SECS)
-        exit(-1)
+        sys.exit(-1)
 
     def on_connecting(self, host_and_port):
         logging.info("Connecting to " + host_and_port[0])
@@ -116,7 +116,7 @@ class StompClient(stomp.ConnectionListener):
             logging.info(
                 "Successfully received a Darwin Push Port message from %s", obj.ts
             )
-            logging.debug("Raw XML=%s" % msg)
+            logging.debug("Raw XML=%s", msg)
         except Exception as e:
             logging.error(str(e))
 
