@@ -17,6 +17,7 @@
 #
 
 import os
+import sys
 import stomp
 import zlib
 import io
@@ -31,6 +32,13 @@ USERNAME = os.getenv('USERNAME')
 PASSWORD = os.getenv('PASSWORD')
 HOSTNAME = os.getenv('HOSTNAME')
 HOSTPORT = os.getenv('HOSTPORT')
+
+debug: bool = False
+# if debug in CL args, set logging level to debug
+if len(sys.argv) > 1 and sys.argv[1] == 'debug':
+    debug = True
+
+logging.basicConfig(format='%(asctime)s %(levelname)s\t%(message)s', level=logging.DEBUG if debug else logging.INFO)
 
 try:
     import PPv16
