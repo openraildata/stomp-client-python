@@ -18,12 +18,12 @@
 
 import os
 import sys
-import stomp
 import zlib
 import io
 import time
 import socket
 import logging
+import stomp
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -33,14 +33,14 @@ PASSWORD = os.getenv("PASSWORD")
 HOSTNAME = os.getenv("HOSTNAME")
 HOSTPORT = os.getenv("HOSTPORT")
 
-debug: bool = False
+DEBUG: bool = False
 # if debug in CL args, set logging level to debug
 if len(sys.argv) > 1 and sys.argv[1] == "debug":
-    debug = True
+    DEBUG = True
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)s\t%(message)s",
-    level=logging.DEBUG if debug else logging.INFO,
+    level=logging.DEBUG if DEBUG else logging.INFO,
 )
 
 try:
@@ -59,7 +59,8 @@ RECONNECT_DELAY_SECS = 15
 
 if USERNAME == "":
     logging.error(
-        "Username not set - please configure your username and password in opendata-nationalrail-client.py!"
+        "Username not set - "
+        "please configure your username and password in opendata-nationalrail-client.py!"
     )
 
 
