@@ -1,0 +1,5 @@
+# python
+/env
+
+# secrets
+.env
