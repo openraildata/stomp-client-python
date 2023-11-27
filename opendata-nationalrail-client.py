@@ -28,10 +28,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-USERNAME = os.getenv("USERNAME")
-PASSWORD = os.getenv("PASSWORD")
-HOSTNAME = os.getenv("HOSTNAME")
-HOSTPORT = os.getenv("HOSTPORT")
+USERNAME = os.getenv("STOMP_USERNAME")
+PASSWORD = os.getenv("STOMP_PASSWORD")
+HOSTNAME = os.getenv("STOMP_HOSTNAME")
+HOSTPORT = os.getenv("STOMP_HOSTPORT")
 
 DEBUG: bool = False
 # if debug in CL args, set logging level to debug
