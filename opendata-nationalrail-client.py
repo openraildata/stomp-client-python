@@ -1,6 +1,6 @@
 #
 # National Rail Open Data client demonstrator
-# Copyright (C)2019-2022 OpenTrainTimes Ltd.
+# Copyright (C)2019-2024 OpenTrainTimes Ltd.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ if USERNAME == '':
 
 
 def connect_and_subscribe(connection):
-    if stomp.__version__[0] < 5:
+    if stomp.__version__[0] < '5':
         connection.start()
 
     connect_header = {'client-id': USERNAME + '-' + CLIENT_ID}
@@ -71,7 +71,7 @@ class StompClient(stomp.ConnectionListener):
     def on_heartbeat_timeout(self):
         logging.error('Heartbeat timeout')
 
-    def on_error(self, headers, message):
+    def on_error(self, message):
         logging.error(message)
 
     def on_disconnected(self):
@@ -83,7 +83,6 @@ class StompClient(stomp.ConnectionListener):
         logging.info('Connecting to ' + host_and_port[0])
 
     def on_message(self, frame):
-        logging.info(frame)
         try:
             logging.info('Message sequence=%s, type=%s received', frame.headers['SequenceNumber'],
                          frame.headers['MessageType'])

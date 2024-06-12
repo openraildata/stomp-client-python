@@ -1,2 +1,2 @@
-stomp.py>=8.0.0
-PyXB-X>=1.2.6
+stomp.py>=8.1.2
+PyXB-X>=1.2.6.2-b

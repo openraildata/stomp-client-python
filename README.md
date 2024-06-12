@@ -6,16 +6,6 @@ messages from the National Rail Open Data platform, located at the following URL
 
 * https://opendata.nationalrail.co.uk/
 
-Due to a breaking change between Python 3.11 and Python 3.12, the
-`pyxbgen` command will fail with the following error:
-
-```text
-AttributeError: module 'collections' has no attribute 'MutableSequence'
-```
-
-Until the GitHub issue at https://github.com/renalreg/PyXB-X/issues/13 is resolved,
-please do *not* use Python 3.12 to run this code.
-
 To use this service, you will need to sign up for a free account and subscribe
 to the 'Darwin' feed.
 
